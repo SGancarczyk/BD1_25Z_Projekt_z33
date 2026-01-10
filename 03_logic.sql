@@ -3,7 +3,6 @@
 -- SCRIPT: 03_logic.sql
 -- =============================================
 
--- Tabela logów
 CREATE TABLE hotel_logs (
                             log_id      NUMBER(10) PRIMARY KEY,
                             log_date    DATE DEFAULT sysdate,
@@ -79,7 +78,6 @@ BEGIN
         INSERT INTO hotel_reservations (reservation_id, guest_id, room_id, check_in_date, check_out_date, status)
         VALUES (seq_hotel_reservations.NEXTVAL, p_guest_id, p_room_id, p_start_date, p_end_date, 'CONFIRMED');
 
-        -- Logowanie operacji
         INSERT INTO hotel_logs (log_id, message, user_name)
         VALUES (seq_hotel_logs.NEXTVAL, 'Reservation created for Room ID: ' || p_room_id, USER);
 
@@ -134,7 +132,6 @@ CREATE OR REPLACE TRIGGER trg_validate_dates
     BEFORE INSERT OR UPDATE ON hotel_reservations
     FOR EACH ROW
 BEGIN
-    -- 1. Data końca musi być późniejsza niż początku
     IF :NEW.check_out_date <= :NEW.check_in_date THEN
         RAISE_APPLICATION_ERROR(-20001, 'Check-out date must be later than check-in date!');
     END IF;
